@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class player : MonoBehaviour
+public class player : MonoBehaviour, IWalkable
 {
     #region Enum
     public enum MovementState { Idle, Walking, Stop };
@@ -257,7 +257,7 @@ public class player : MonoBehaviour
     #endregion
 
     #region Movement
-    private void Walk()
+    public void Walk()
     {
         //calcula a direcao que queremos nos mover na velocidade desejada
         float targetSpeed = moveDirection * moveSpeed;
