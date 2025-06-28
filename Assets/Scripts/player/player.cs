@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class player : MonoBehaviour, IWalkable
+public class player : MonoBehaviour
 {
     #region Enum
     public enum MovementState { Idle, Walking, Stop };

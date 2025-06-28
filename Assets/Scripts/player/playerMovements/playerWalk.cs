@@ -3,8 +3,10 @@ using static player;
 
 public class playerWalk : MonoBehaviour, IWalkable
 {
+    #region Enum
     public enum MovementState { Idle, Walking, Stop };
-
+    #endregion
+    
     #region Variables
 
     [Header("References")]
@@ -25,14 +27,11 @@ public class playerWalk : MonoBehaviour, IWalkable
     private float saveFrictionAmount = 0.55f;
 
     [Header("Original Movement Values")]
-
     private float originalMoveSpeed = 7;
-    private float originalAcceleration = 12;
-    private float originalDecceleration = 16;
-    private float originalVelPower = 0.85f;
     private float originalFrictionAmout = 0.55f;
-
     #endregion
+
+    #region Get/Set
     public MovementState SetIdle() => mState = MovementState.Idle;
     public MovementState SetWalk() => mState = MovementState.Walking;
     public MovementState SetStop() => mState = MovementState.Stop;
@@ -43,6 +42,7 @@ public class playerWalk : MonoBehaviour, IWalkable
     public float FrictionAmount { get => frictionAmout; set => frictionAmout = value; }
     public float OriginalFrictionAmount { get => saveFrictionAmount; }
     public float MoveSpeed { get => moveSpeed; set => moveSpeed = value; }
+    #endregion
   
     private void Awake()
     {

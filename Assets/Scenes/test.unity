@@ -175,7 +175,7 @@ GameObject:
   - component: {fileID: 7161703}
   - component: {fileID: 7161705}
   - component: {fileID: 7161704}
-  m_Layer: 6
+  m_Layer: 3
   m_Name: Square (8)
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -381,7 +381,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   groundLayer:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 8
 --- !u!1 &197621153
 GameObject:
   m_ObjectHideFlags: 0
@@ -393,7 +393,7 @@ GameObject:
   - component: {fileID: 197621154}
   - component: {fileID: 197621156}
   - component: {fileID: 197621155}
-  m_Layer: 6
+  m_Layer: 3
   m_Name: Square (13)
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -1085,7 +1085,7 @@ GameObject:
   - component: {fileID: 487498192}
   - component: {fileID: 487498191}
   - component: {fileID: 487498190}
-  m_Layer: 6
+  m_Layer: 3
   m_Name: Square (3)
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -1408,7 +1408,7 @@ GameObject:
   - component: {fileID: 513605175}
   - component: {fileID: 513605177}
   - component: {fileID: 513605176}
-  m_Layer: 6
+  m_Layer: 3
   m_Name: Square (9)
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -1787,7 +1787,7 @@ GameObject:
   - component: {fileID: 637076347}
   - component: {fileID: 637076346}
   - component: {fileID: 637076345}
-  m_Layer: 6
+  m_Layer: 3
   m_Name: Square
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -2109,6 +2109,8 @@ GameObject:
   - component: {fileID: 769518928}
   - component: {fileID: 769518925}
   - component: {fileID: 769518930}
+  - component: {fileID: 769518932}
+  - component: {fileID: 769518933}
   m_Layer: 31
   m_Name: Player
   m_TagString: Player
@@ -2123,7 +2125,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 769518920}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9b01eaa56be71824a8f2f9ba5c506e44, type: 3}
   m_Name: 
@@ -2453,6 +2455,47 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _turnbasedScript: {fileID: 317114437}
   _cameraSmoothFollow: {fileID: 519420033}
+--- !u!114 &769518932
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 769518920}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae5b0d0cffc4ca4418c9305ad041a7b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 7
+  acceleration: 12
+  decceleration: 16
+  velPower: 0.85
+  frictionAmout: 0.55
+  direction: 0
+  moveDirection: 0
+--- !u!114 &769518933
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 769518920}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 117424ecc5641b449a3ee1f96785228b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  jumpForce: 5.5
+  maxJumps: 2
+  originalJumpForce: 5
+  groundCheck: {fileID: 159322901}
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  fallMultiplier: 5
+  lowJumpMultiplier: 2
+  isJumping: 0
 --- !u!1 &823738959
 GameObject:
   m_ObjectHideFlags: 0
@@ -2629,7 +2672,7 @@ GameObject:
   - component: {fileID: 940147104}
   - component: {fileID: 940147106}
   - component: {fileID: 940147105}
-  m_Layer: 6
+  m_Layer: 3
   m_Name: Square (15)
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -2763,7 +2806,7 @@ GameObject:
   - component: {fileID: 983841739}
   - component: {fileID: 983841738}
   - component: {fileID: 983841737}
-  m_Layer: 6
+  m_Layer: 3
   m_Name: Square (7)
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -2908,7 +2951,7 @@ GameObject:
   - component: {fileID: 1091024576}
   - component: {fileID: 1091024575}
   - component: {fileID: 1091024574}
-  m_Layer: 6
+  m_Layer: 3
   m_Name: Square (1)
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -3899,7 +3942,7 @@ GameObject:
   - component: {fileID: 1476528462}
   - component: {fileID: 1476528464}
   - component: {fileID: 1476528463}
-  m_Layer: 6
+  m_Layer: 3
   m_Name: Square (11)
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -4033,7 +4076,7 @@ GameObject:
   - component: {fileID: 1553502409}
   - component: {fileID: 1553502408}
   - component: {fileID: 1553502407}
-  m_Layer: 6
+  m_Layer: 3
   m_Name: Square (5)
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -4545,7 +4588,7 @@ GameObject:
   - component: {fileID: 1670354487}
   - component: {fileID: 1670354486}
   - component: {fileID: 1670354485}
-  m_Layer: 6
+  m_Layer: 3
   m_Name: Square (6)
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -4679,7 +4722,7 @@ GameObject:
   - component: {fileID: 1708089686}
   - component: {fileID: 1708089688}
   - component: {fileID: 1708089687}
-  m_Layer: 6
+  m_Layer: 3
   m_Name: Square (10)
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -4945,7 +4988,7 @@ GameObject:
   - component: {fileID: 1710452992}
   - component: {fileID: 1710452994}
   - component: {fileID: 1710452993}
-  m_Layer: 6
+  m_Layer: 3
   m_Name: Square (14)
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -5503,7 +5546,7 @@ GameObject:
   - component: {fileID: 1946685112}
   - component: {fileID: 1946685114}
   - component: {fileID: 1946685113}
-  m_Layer: 6
+  m_Layer: 3
   m_Name: Square (12)
   m_TagString: Ground
   m_Icon: {fileID: 0}
