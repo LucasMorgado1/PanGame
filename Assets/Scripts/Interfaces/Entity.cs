@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public interface IDamageable
@@ -13,5 +14,10 @@ public interface IWalkable
 public interface IJump
 {
     void Jump();
+}
+
+public interface IDash
+{
+    IEnumerator Dash();
 }
 

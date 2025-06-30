@@ -42,8 +42,10 @@ public class playerWalk : MonoBehaviour, IWalkable
     public float FrictionAmount { get => frictionAmout; set => frictionAmout = value; }
     public float OriginalFrictionAmount { get => saveFrictionAmount; }
     public float MoveSpeed { get => moveSpeed; set => moveSpeed = value; }
+    public float GetMoveDirection { get => moveDirection; }
+    public float GetDirection { get => direction; }
     #endregion
-  
+
     private void Awake()
     {
         _playerControls = new PlayerControls();
