@@ -9,17 +9,21 @@ public enum BattleState { Start, PreparingPlayer, PlayerTurn, EnemyTurn, Won, Lo
 
 public class turnbasedScript : MonoBehaviour
 {
+    #region Variables
     [Header("References")]
     private Camera _camera;
     [SerializeField] private EnemiesManager _enemiesManager;
     [SerializeField] private Checkpoint _checkpoint;
+    private PlayerTurn _playerTurn;
+    private EnemyTurn _enemyTurn;
 
     [Header("BattlePosition")]
     [SerializeField] private Image _playerBattlePosition;
     [SerializeField] private Image _enemyBattlePosition;
 
     [Header("Player")]
-    [SerializeField] private player _player;
+    [SerializeField] private PlayerManager _playerManager;
+    private playerWalk _playerMovement;
 
     [Header("Canvas")]
     [SerializeField] private TextMeshProUGUI _dialogueText;
@@ -39,29 +43,49 @@ public class turnbasedScript : MonoBehaviour
 
     private TypewriterByWord _textAnimator;
 
-    #region Getter & Setters
-    public Enemy SetEnemyScript { set => _enemy = value; }
-    //public GameObject SetEnemySelectedByThePlayer { set => _enemySelectedByThePlayer = value; }
+    private bool isTurnBasedActive;
+    [SerializeField] private TextMeshProUGUI debugtext;
     #endregion
+
+    #region Getter & Setters
+    public Enemy SetEnemyScript { set => _enemyTurn.SetEnemy = value; }
+    public TypewriterByWord GetTextAnimator { get => _textAnimator; private set => _textAnimator = value; }
+    public GameObject GetAttackCanvas { get => _attackCanvas; }
+    public BattleState State { get => _state; set => _state = value; }
+    public PlayerManager GetPlayerManager { get => _playerManager; }
+    public TextMeshProUGUI GetPlayerText { get => _playerLife; }
+    public TextMeshProUGUI GetEnemyText { get => _enemyHPtxt; }
+    public TextMeshProUGUI GetDialogueText { get => _dialogueText; set => _dialogueText = value; }
+    #endregion
+
+    void Awake()
+    {
+        _playerTurn = GetComponent<PlayerTurn>();
+        _enemyTurn = GetComponent<EnemyTurn>();
+        _attackCanvas = this.gameObject.transform.GetChild(2).transform.GetChild(0).gameObject;
+        _lifeUI = this.gameObject.transform.GetChild(2).transform.GetChild(1).gameObject;
+        _textAnimator = this.gameObject.transform.GetChild(1).GetComponent<TypewriterByWord>();
+    }
 
     private void Start()
     {
         _state = BattleState.Start;
         _camera = Camera.main;
-       
-        _attackCanvas = this.gameObject.transform.GetChild(2).transform.GetChild(0).gameObject;
-        _lifeUI = this.gameObject.transform.GetChild(2).transform.GetChild(1).gameObject;
-
-        _textAnimator = this.gameObject.transform.GetChild(1).GetComponent<TypewriterByWord>();
-
+        _playerMovement = _playerManager.GetPlayerWalkScript;
         _lifeUI.SetActive(false);
         _attackCanvas.SetActive(false);
+    }
+
+    private void Update() {
+        if (isTurnBasedActive)
+            debugtext.text = "Current State: " + _state.ToString();
     }
 
     #region Setup Battle
     IEnumerator SetupBattle ()
     {
-        _enemy = GetComponent<Enemy>();
+        isTurnBasedActive = true;
+        //_enemy = GetComponent<Enemy>();
 
         _textAnimator.ShowText("The Battle starts");
 
@@ -71,16 +95,16 @@ public class turnbasedScript : MonoBehaviour
 
         _lifeUI.SetActive(true);
 
-        UpdateHPUI(_playerLife, _player.GetLife, _player.GetTotalLife);
-        UpdateHPUI(_enemyHPtxt, _enemy.GetLife, _enemy.GetTotalLife);
+        UpdateHPUI(_playerLife, _playerTurn.GetPlayerManager.GetCurrentHealth, _playerTurn.GetPlayerManager.GetMaxHealth);
+        UpdateHPUI(_enemyHPtxt, _enemyTurn.GetEnemyFunctions.GetLife, _enemyTurn.GetEnemyFunctions.GetTotalLife);
 
-        _playerLife.transform.parent.gameObject.GetComponent<TextMeshProUGUI>().text = _player.name.ToUpper(); //change the text according to the player's name
-        _enemyHPtxt.transform.parent.gameObject.GetComponent<TextMeshProUGUI>().text = _enemy.name.ToUpper(); //change the text according to the enemy name
+        _playerLife.transform.parent.gameObject.GetComponent<TextMeshProUGUI>().text = _playerTurn.GetPlayerManager.name.ToUpper(); //change the text according to the player's name
+        _enemyHPtxt.transform.parent.gameObject.GetComponent<TextMeshProUGUI>().text = _enemyTurn.GetEnemyFunctions.name.ToUpper(); //change the text according to the enemy name
 
-        _playerBattlePosition.sprite = _player.GetComponent<SpriteRenderer>().sprite;
-        _enemyBattlePosition.sprite = _enemy.GetSprite;
+        _playerBattlePosition.sprite = _playerManager.GetComponent<SpriteRenderer>().sprite;
+        _enemyBattlePosition.sprite = _enemyTurn.GetEnemyFunctions.GetSprite;
 
-        PlayerTurn();
+        _playerTurn.PlayerPhase();
 
     }
 
@@ -88,12 +112,12 @@ public class turnbasedScript : MonoBehaviour
     {
         _tbCanvas.SetActive(true);
         StartCoroutine(SetupBattle());
-        transform.position = _player.gameObject.transform.position;
+        transform.position = _playerManager.gameObject.transform.position;
         _camera.orthographicSize = 3;
     }
     #endregion
-
-    #region Player Turn
+    
+    /*#region Player Turn
     private void PlayerTurn ()
     {
         _textAnimator.ShowText("Choose an action...");
@@ -133,7 +157,7 @@ public class turnbasedScript : MonoBehaviour
         if (RollDice() <= 9)
         {
             //damage the enemy
-            isDead = _enemy.TakeDamage(_player.GetAttackDamge);
+            isDead = _enemy.TakeDamage(_playerManager.GetAttackDamage);
             UpdateHPUI(_enemyHPtxt, _enemy.GetLife, _enemy.GetTotalLife);
             //_dialogueText.text = "The attack is succesful!!";
             _textAnimator.ShowText("The attack is <color=yellow><wave>succesful</color></wave>!!");
@@ -162,8 +186,8 @@ public class turnbasedScript : MonoBehaviour
 
     IEnumerator HealPlayer ()
     {
-        _player.HealHP(3);
-        UpdateHPUI(_playerLife, _player.GetLife, _player.GetTotalLife);
+        _playerManager.HealHealth(3);
+        UpdateHPUI(_playerLife, _playerManager.GetCurrentHealth, _playerManager.GetMaxHealth);
         //_dialogueText.text = "After driking some refreshing juice, you feel new again!!";
         _textAnimator.ShowText("You feel <wave><color=green>healed</color></wave> after drinking some juice");
 
@@ -174,6 +198,7 @@ public class turnbasedScript : MonoBehaviour
         StartCoroutine(EnemyAttack());
     }
     #endregion
+    
 
     #region Enemy Turn
     IEnumerator EnemyAttack ()
@@ -211,10 +236,9 @@ public class turnbasedScript : MonoBehaviour
         else
         {
             _state = BattleState.PlayerTurn;
-            PlayerTurn();
+            _playerTurn.PlayerPhase();
             //StartCoroutine(PlayerAttack());
         }
-
     }
 
     private void CallRandomAttack(EnemyType enemyType, bool isDead)
@@ -238,49 +262,47 @@ public class turnbasedScript : MonoBehaviour
         }
     }
 
-    private void RandomEnemyAttack (int normalAttack, int strongAttack, EnemyType enemyType, int minNormal, int maxNormal, int minStrong, int maxStrong, bool isDead)
+    private void RandomEnemyAttack(int normalAttack, int strongAttack, EnemyType enemyType, int minNormal, int maxNormal, int minStrong, int maxStrong, bool isDead)
     {
-        if (RollDice() >= minNormal && RollDice() <= maxNormal)
+        int roll = RollDice();
+        int damage = 0;
+        string message;
+
+        if (roll >= minNormal && roll <= maxNormal)
         {
-            isDead = _player.TakeDamage(normalAttack);
-            UpdateHPUI(_playerLife, _player.GetLife, _player.GetTotalLife);
-            _dialogueText.text = _enemy.name + " attacks causing " + normalAttack + " of damage";
+            damage = normalAttack;
+            message = $"{_enemy.name} attacks causing {damage} damage.";
         }
-        else if (RollDice() >= minStrong && RollDice() <= maxStrong)
+        else if (roll >= minStrong && roll <= maxStrong)
         {
-            isDead = _player.TakeDamage(strongAttack);
-            UpdateHPUI(_playerLife, _player.GetLife, _player.GetTotalLife);
-            _dialogueText.text = _enemy.name.ToUpper() + " attacks causing " + strongAttack + " of damage";
+            damage = strongAttack;
+            message = $"{_enemy.name.ToUpper()} attacks causing {damage} damage.";
         }
         else
         {
             isDead = false;
-            UpdateHPUI(_playerLife, _player.GetLife, _player.GetTotalLife);
-            _dialogueText.text = _enemy.name.ToUpper() + " has missed his attack!!";
+            UpdateHPUI(_playerLife, _playerManager.GetCurrentHealth, _playerManager.GetMaxHealth);
+            _dialogueText.text = $"{_enemy.name.ToUpper()} has missed his attack!!";
+            return;
         }
+
+        isDead = _playerManager.TakeDamage(damage);
+        UpdateHPUI(_playerLife, _playerManager.GetCurrentHealth, _playerManager.GetMaxHealth);
+        _dialogueText.text = message;
     }
 
-    #endregion
+    #endregion*/
 
     #region End Battle
-    IEnumerator EndBattle ()
+    public IEnumerator EndBattle ()
     {
         if (_state == BattleState.Won)
         {
-            _dialogueText.text = "CONGRATS!! You has everything that a Hero needs...";
+            _dialogueText.text = $"CONGRATS!! You has everything that a Hero needs...";
             _lifeUI.SetActive(false);
             _attackCanvas.SetActive(false);
 
             yield return new WaitForSeconds(2.5f);
-
-            _tbCanvas.SetActive(false);
-            _camera.orthographicSize = 5;
-
-            _enemyHasHealed = false;
-            _enemiesManager.DisableEnemy(_enemy.GetIndex);
-            _player.RestoreHP();
-            _player.EnablePlayerMovement();
-
         } 
         else
         {
@@ -289,22 +311,21 @@ public class turnbasedScript : MonoBehaviour
 
             yield return new WaitForSeconds(2.5f);
 
-            _player.EnablePlayerMovement();
             _checkpoint.ReturnToCheckpoint();
             _enemiesManager.EnableAllEnemies(); //later Ill have to change this to enable all the enemies that wasnt defeated
-
-            _enemyHasHealed = false;
-            _player.RestoreHP();
-            _enemy.RestoreFullHP();
-
-            _tbCanvas.SetActive(false); //change this later to leantween animation
-            _camera.orthographicSize = 5;
         }
+
+        _playerMovement.EnablePlayerMovement();
+        _enemyHasHealed = false;
+        _playerManager.RestoreMaxHealth();
+        _enemy.RestoreFullHP();
+        _tbCanvas.SetActive(false); //change this later to leantween animation
+        _camera.orthographicSize = 5;
         yield return null;
     }
     #endregion
 
-    IEnumerator Run ()
+    public IEnumerator Run ()
     {
         _dialogueText.text = "You decided to RUN...";
 
@@ -318,29 +339,28 @@ public class turnbasedScript : MonoBehaviour
 
             _attackCanvas.SetActive(false);
             _state = BattleState.EnemyTurn;
-            StartCoroutine(EnemyAttack());
+            StartCoroutine(_enemyTurn.EnemyAttack());
         }
         else
         {
-            _dialogueText.text = "After fearing your enemy, you RAN!!";
+            _dialogueText.text = "The enemy was too strong... for now!";
 
             yield return new WaitForSeconds(3f);
             
             _tbCanvas.SetActive(false);
             _camera.orthographicSize = 5;
-            //the player does not heal himself when running from a battle
             _enemiesManager.DisableEnemy(_enemy.GetIndex);
-            _player.EnablePlayerMovement();
+            _playerMovement.EnablePlayerMovement();
         }
         yield return null;
     }
 
-    private void UpdateHPUI (TextMeshProUGUI lifeTxt, int currentLife, int totalLife)
+    public void UpdateHPUI (TextMeshProUGUI lifeTxt, int currentLife, int totalLife)
     {
         lifeTxt.text = currentLife + "/" + totalLife;
     }
 
-    private int RollDice ()
+    public int RollDice ()
     {
         return Random.Range(1, 11);
     }

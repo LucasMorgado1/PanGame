@@ -13,6 +13,8 @@ public class playerDash : MonoBehaviour, IDash
     private float _moveDirection = 0;
     private float _direction = 0f;
 
+    public bool SetCanDash { get => _canDash; private set => _canDash = value; }
+
     void Start()
     {
         _rb = GetComponent<Rigidbody2D>();
@@ -20,7 +22,8 @@ public class playerDash : MonoBehaviour, IDash
         _direction = GetComponent<playerWalk>().GetDirection;
     }
 
-    private void FixedUpdate() {
+    private void FixedUpdate()
+    {
         if (_pressedDash)
         {
             Debug.Log("deu dash");
@@ -32,20 +35,20 @@ public class playerDash : MonoBehaviour, IDash
             }
         }
     }
-    
-    public void DashHandler (InputAction.CallbackContext ctx)
+
+    public void DashHandler(InputAction.CallbackContext ctx)
     {
         _pressedDash = ctx.performed;
     }
 
-    IEnumerator IDash.Dash ()
+    IEnumerator IDash.Dash()
     {
         float originalGravity = _rb.gravityScale;
         _rb.gravityScale = 0;
-        
+
         float dashSpeed = (dashForce + GetComponent<playerWalk>().GetMoveDirection) * GetComponent<playerWalk>().GetDirection;
         Vector2 dashDirection = new Vector2(this.transform.position.x + dashSpeed, this.transform.position.y);
-        
+
         _rb.AddForce(dashDirection);
 
         yield return new WaitForSeconds(dashTime);
@@ -55,5 +58,15 @@ public class playerDash : MonoBehaviour, IDash
         yield return new WaitForSeconds(dashCooldown);
 
         _canDash = true;
+    }
+
+    public bool DisablePlayerDash()
+    {
+        return SetCanDash = false;
+    }
+
+    public bool EnablePlayerDash()
+    {
+        return SetCanDash = true;
     }
 }

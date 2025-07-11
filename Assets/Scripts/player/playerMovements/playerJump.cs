@@ -11,9 +11,11 @@ public class playerJump : MonoBehaviour
     public float lowJumpMultiplier = 2f;   // Multiplicador de pulo baixo para controlar o arco do pulo
     private float playerYpositionBeforeJump;
     private int currentJumps = 0;     // Pulos atuais
-    [HideInInspector] public bool isJumping = false;   // Está pulando?  2
+    private bool isJumping = false;   // Está pulando?  2
     private Rigidbody2D rb;
     private PlayerControls _playerControls;
+
+    public bool GetIsJumping { get => isJumping; }
 
     void Start()
     {
@@ -55,6 +57,16 @@ public class playerJump : MonoBehaviour
     {
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
         currentJumps++;
+    }
+
+    public void DisablePlayerJump()
+    {
+        jumpForce = 0;
+    }
+
+    public void RestorePlayerJump()
+    {
+        jumpForce = originalJumpForce;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

@@ -60,6 +60,9 @@ TagManager:
   - name: Player
     uniqueID: 152456267
     locked: 0
+  - name: Turnbased UI
+    uniqueID: 411589371
+    locked: 0
   m_RenderingLayers:
   - Default
   - Light Layer 1

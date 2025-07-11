@@ -13,6 +13,8 @@ public class playerWalk : MonoBehaviour, IWalkable
     private MovementState mState;
     private PlayerControls _playerControls;
     private Rigidbody2D rb;
+    private playerJump _playerJump;
+    private playerDash _playerDash;
 
     [Header("Movement")]
     [SerializeField] private float moveSpeed;
@@ -50,6 +52,8 @@ public class playerWalk : MonoBehaviour, IWalkable
     {
         _playerControls = new PlayerControls();
         rb = GetComponent<Rigidbody2D>();
+        _playerJump = GetComponent<playerJump>();
+        _playerDash = GetComponent<playerDash>();
         _playerControls.Player.Move.performed += ctx => moveDirection = ctx.ReadValue<float>();
     }
 
@@ -136,16 +140,16 @@ public class playerWalk : MonoBehaviour, IWalkable
     {
         SetMoveSpeed = 0;
         FrictionAmount = 5;
-        //jumpForce = 0;
-        //_canDash = false;
+        _playerJump.DisablePlayerJump();
+        _playerDash.DisablePlayerDash();
     }
 
     public void EnablePlayerMovement()
     {
         SetMoveSpeed = originalMoveSpeed;
         frictionAmout = originalFrictionAmout;
-        //jumpForce = originalJumpForce;
-        //_canDash = true;
+        _playerJump.RestorePlayerJump();
+        _playerDash.EnablePlayerDash();
     }
 
     private void Friction()

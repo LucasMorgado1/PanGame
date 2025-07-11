@@ -6,15 +6,13 @@ public class playerTurnBased : MonoBehaviour
 {
     [SerializeField] private turnbasedScript _turnbasedScript;
     [SerializeField] private SmoothFollow _cameraSmoothFollow;
-    private player _player;
-
+    private playerWalk _playerMovement;
+    private playerJump _playerJump;
     private int playerLife = 10;
-
     private bool _playerIsJumping = false;
     private bool once = false;
 
     #region Getter & Setters
-    public player GetPlayerScript { get => _player; }
     public int GetPlayerLife { get => playerLife; }
     public int SetPlayerLife { set => playerLife = value; }
 
@@ -22,24 +20,25 @@ public class playerTurnBased : MonoBehaviour
 
     private void Awake()
     {
-        _player = GetComponent<player>();
+        _playerMovement = GetComponent<playerWalk>();
+        _playerJump = GetComponent<playerJump>();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
 
-        if (collision.CompareTag("Enemy"))
+        if (collision.CompareTag(StringUtils.Tags.Enemy))
         {
             _cameraSmoothFollow.smoothTime = 0;
-            if (!_player.isJumping)
+            if (!_playerJump.GetIsJumping)
             {
-                _player.DisablePlayerMovement();
+                _playerMovement.DisablePlayerMovement();
                 _turnbasedScript.ActivateTurnBased();
                 _turnbasedScript.SetEnemyScript = collision.GetComponent<Enemy>();
             } 
             else
             {
-                _player.DisablePlayerMovement();
+                _playerMovement.DisablePlayerMovement();
                 _playerIsJumping = true;
             }
         }
@@ -47,18 +46,17 @@ public class playerTurnBased : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.CompareTag("Enemy"))
+        if (collision.CompareTag(StringUtils.Tags.Enemy))
         {
             if (_playerIsJumping && !once)
             {
-                if (!_player.isJumping)
+                if (!_playerJump.GetIsJumping)
                 {
                     once = true;
                     _turnbasedScript.ActivateTurnBased();
                     _turnbasedScript.SetEnemyScript = collision.GetComponent<Enemy>();
                 }
             }
-            Debug.Log("is touching here");
         }
     }
 
@@ -70,7 +68,7 @@ public class playerTurnBased : MonoBehaviour
 
     public void OnExitBattle ()
     {
-        _player.SetMoveSpeed = _player.OriginalMoveSpeed;
-        _player.FrictionAmount = _player.OriginalFrictionAmount;
+        _playerMovement.SetMoveSpeed = _playerMovement.OriginalMoveSpeed;
+        _playerMovement.FrictionAmount = _playerMovement.OriginalFrictionAmount;
     }
 }

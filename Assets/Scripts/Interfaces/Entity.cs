@@ -1,11 +1,6 @@
 using System.Collections;
 using UnityEngine;
 
-public interface IDamageable
-{
-    void TakeDamage(int damage);
-}
-
 public interface IWalkable
 {
     void Walk();
